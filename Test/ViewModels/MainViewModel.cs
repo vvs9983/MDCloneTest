@@ -33,6 +33,9 @@ namespace Test.ViewModels
 
         private string email;
 
+        private MailMessage mailMessage;
+        private SmtpClient smtpClient;
+
         public MainViewModel(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
@@ -96,6 +99,9 @@ namespace Test.ViewModels
 
         public override void Dispose()
         {
+            smtpClient?.Dispose();
+            mailMessage?.Dispose();
+
             Tabs.CollectionChanged -= TabsCollectionChanged;
             Tabs.Clear();
 
@@ -122,20 +128,21 @@ namespace Test.ViewModels
                 return;
             }
 
-            using var mail = new MailMessage(mailTab.Sender, mailTab.Recipient, mailTab.Subject, mailTab.Body);
-            var client = new SmtpClient
+            mailMessage = new MailMessage(mailTab.Sender, mailTab.Recipient, mailTab.Subject, mailTab.Body);
+            
+            smtpClient = new SmtpClient
             {
                 Host = "smtp.gmail.com",
                 Port = 587,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(Email, passwordBox.Password),
+                Credentials = new NetworkCredential(Email, passwordBox.Password)
             };
 
-            client.SendCompleted += new SendCompletedEventHandler(SendCompletedCallback);
+            smtpClient.SendCompleted += new SendCompletedEventHandler(SendCompletedCallback);
 
-            client.SendAsync(mail, mailTab.GetHashCode());
+            smtpClient.SendAsync(mailMessage, mailTab.GetHashCode());
         }
 
         private async void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
@@ -147,9 +154,8 @@ namespace Test.ViewModels
             {
                 Console.WriteLine("[{0}] Send canceled.", token);
             }
-            if (e.Error != null)
+            else if (e.Error != null)
             {
-                Console.WriteLine("[{0}] {1}", token, e.Error.ToString());
                 ((PopupViewModel)popup.DataContext).Message = $"[{token}] {e.Error.Message}";
                 await DialogHost.Show(serviceProvider.GetRequiredService<PopupView>(), "RootDialog");
             }
@@ -158,6 +164,8 @@ namespace Test.ViewModels
                 ((PopupViewModel)popup.DataContext).Message = "Email sent successfully!";
                 await DialogHost.Show(serviceProvider.GetRequiredService<PopupView>(), "RootDialog");
             }
+
+            ((SmtpClient)sender).SendCompleted -= SendCompletedCallback;
         }
 
         private bool IsInputValid(MailTab sender)
