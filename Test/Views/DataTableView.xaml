@@ -15,7 +15,9 @@
 
         <DockPanel Grid.Row="0">
             <Button HorizontalAlignment="Left" Margin="10" BorderThickness="0" Background="Transparent" Cursor="Hand" Command="{Binding ImportCommand}" Focusable="False" ToolTip="Import Csv File">
-                <materialDesign:PackIcon Kind="FileImportOutline" Width="24" Height="24" />
+                <TextBlock ToolTip="Uploaded fiel shoud be a CSV file with header row" HorizontalAlignment="Right" Width="18">
+                    <materialDesign:PackIcon Kind="FileImportOutline" Width="24" Height="24" />
+                </TextBlock>
                 <Button.Style>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Background" Value="Transparent" />
