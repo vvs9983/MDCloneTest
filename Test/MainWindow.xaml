@@ -1,0 +1,77 @@
+﻿<Window x:Class="Test.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:Test.Views"
+        xmlns:models="clr-namespace:Test.Models"        
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+
+    <Grid>
+        <materialDesign:DialogHost BorderBrush="{DynamicResource MaterialDesignDarkSeparatorBackground}" Identifier="RootDialog">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="10"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Column="0" Grid.Row="1">
+                    <StackPanel>
+                        <Button
+                        Margin="10"
+                        Content="New Data Tab"
+                        Command="{Binding AddDataTabCommand}"
+                        Height="30" Width="150"
+                        VerticalAlignment="Top" />
+
+                        <Button
+                        Content="New Mail Tab"
+                        Command="{Binding AddMailTabCommand}"
+                        Height="30" Width="150"
+                        VerticalAlignment="Top" />
+                    </StackPanel>
+
+                </Grid>
+
+                <TabControl TabStripPlacement="Top" ItemsSource="{Binding Tabs}" SelectedItem="{Binding SelectedTab}" Grid.Column="1" Grid.Row="1"
+                        Style="{StaticResource MaterialDesignNavigatilRailTabControl}" 
+                        materialDesign:ColorZoneAssist.Mode="Standard"
+                        materialDesign:ShadowAssist.ShadowDepth="Depth0">
+
+                    <TabControl.Resources>
+
+                        <DataTemplate DataType="{x:Type models:MailTab}">
+                            <views:MailView/>
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type models:DataTableTab}">
+                            <views:DataTableView/>
+                        </DataTemplate>
+
+                    </TabControl.Resources>
+
+                    <TabControl.ItemTemplate>
+
+                        <DataTemplate DataType="{x:Type models:MailTab}">
+                            <TextBlock>
+                            <materialDesign:PackIcon Kind="{Binding IconKind}" Width="24" Height="24"/>
+                            <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="10 0 0 0" Focusable="False" Command="{Binding CloseCommand}" Foreground="Black">
+                                <materialDesign:PackIcon Kind="CloseThick" Width="15" Height="24" VerticalAlignment="Center"/>
+                            </Button>
+                            </TextBlock>
+                        </DataTemplate>
+
+                    </TabControl.ItemTemplate>
+                </TabControl>
+            </Grid>
+        </materialDesign:DialogHost>
+    </Grid>
+</Window>
