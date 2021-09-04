@@ -59,7 +59,6 @@
                     </TabControl.Resources>
 
                     <TabControl.ItemTemplate>
-
                         <DataTemplate DataType="{x:Type models:MailTab}">
                             <TextBlock>
                             <materialDesign:PackIcon Kind="{Binding IconKind}" Width="24" Height="24"/>

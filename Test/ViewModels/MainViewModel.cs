@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Test.Interfaces;
@@ -114,7 +115,7 @@ namespace Test.ViewModels
         {
             var mailTab = sender as MailTab;
 
-            if (!IsInputValid(mailTab)) return;
+            if (!await IsInputValid(mailTab)) return;
 
             Email = mailTab.Sender;
 
@@ -168,14 +169,24 @@ namespace Test.ViewModels
             ((SmtpClient)sender).SendCompleted -= SendCompletedCallback;
         }
 
-        private bool IsInputValid(MailTab sender)
+        private async Task<bool> IsInputValid(MailTab sender)
         {
             var res = ValidateEmail(sender.Sender);
 
-            if (res != null) return false;
+            if (res != null)
+            {
+                ((PopupViewModel)popup.DataContext).Message = "Invalid sender email address entered.";
+                await DialogHost.Show(serviceProvider.GetRequiredService<PopupView>(), "RootDialog");
+                return false;
+            }
 
             res = ValidateEmail(sender.Recipient);
-            if (res != null) return false;
+            if (res != null)
+            {
+                ((PopupViewModel)popup.DataContext).Message = "Invalid recipient email address entered.";
+                await DialogHost.Show(serviceProvider.GetRequiredService<PopupView>(), "RootDialog");
+                return false;
+            }
 
             return true;
         }

@@ -34,7 +34,7 @@
             <TextBlock Text="{Binding FilePath}" VerticalAlignment="Center"/>
         </DockPanel>
         
-        <DataGrid ItemsSource="{Binding DataTable}" IsReadOnly="True" ColumnWidth="*" Grid.Row="1"/>
+        <DataGrid ItemsSource="{Binding DataTable}" IsReadOnly="True" Grid.Row="1"/>
 
     </Grid>
 </UserControl>
